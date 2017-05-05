@@ -42,9 +42,7 @@ class Query:
             # TODO: Check for errors (GetLastError())
             raise StopIteration
 
-        return ffi.unpack(evt_array, 1)[0]
-
-        
+        return Event(ffi.unpack(evt_array, 1)[0])
 
 
     ##############
@@ -119,3 +117,4 @@ class Query:
 
 import os
 from _winevt import ffi, lib as evtapi
+from winevt.EventLog.Event import Event
