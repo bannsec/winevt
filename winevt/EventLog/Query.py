@@ -21,7 +21,10 @@ class Query:
 
     def __del__(self):
         # Be sure to clean up our query
-        evtapi.EvtClose(self.handle)
+        try:
+            evtapi.EvtClose(self.handle)
+        except:
+            pass
 
     def __repr__(self):
         return "<Query path={0} query={1}>".format(self.path, self.query)
@@ -116,5 +119,5 @@ class Query:
         self.__direction = direction
 
 import os
-from _winevt import ffi, lib as evtapi
+from .. import ffi, evtapi
 from winevt.EventLog.Event import Event

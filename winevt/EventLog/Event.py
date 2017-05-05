@@ -84,5 +84,6 @@ class Event:
         return LogLevels[self.Level]
 
 
-from _winevt import ffi, lib as evtapi
+#from _winevt import ffi, lib as evtapi
+from .. import ffi, evtapi
 import untangle
