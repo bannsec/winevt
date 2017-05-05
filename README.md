@@ -32,7 +32,7 @@ If you were interested in seeing every time you had an error or critical event f
 ```python
 In [1]: from winevt import EventLog
 
-In [2]: query = EventLog.Query("System","Event/System[Level>=2]")
+In [2]: query = EventLog.Query("System","Event/System[Level<=2]")
 
 In [3]: for event in query:
    ...:     print(event.System.Provider['Name'])
@@ -48,7 +48,7 @@ In [2]: def handle_event(action, pContext, event):
    ...:     print("Got event: " + str(event))
    ...:
 
-In [3]: cb = EventLog.Subscribe("System","Event/System[Level>=2]",handle_event)
+In [3]: cb = EventLog.Subscribe("System","Event/System[Level<=2]",handle_event)
 
 In [4]: Got event: <Event EventID=10016 Level=Error>
 Got event: <Event EventID=10016 Level=Error>

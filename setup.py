@@ -63,7 +63,7 @@ long_description = "See website for more info."
 
 setup(
     name='winevt',
-    version='0.0.2',
+    version='0.0.3',
     description='Script to programmatically interface with Windows Events.',
     long_description=long_description,
     url='https://github.com/owlz/winevt',
@@ -81,7 +81,6 @@ setup(
     keywords='windows event evt evtx',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     install_requires=["cffi>=1.0.0","untangle"],
-    setup_requires=["cffi>=1.0.0"],
     #cffi_modules=["winevt/winevt_build.py:ffibuilder"],
     extras_require={
         'dev': ['ipython'],
