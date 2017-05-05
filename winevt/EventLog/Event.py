@@ -26,6 +26,14 @@ class Event:
     def __repr__(self):
         return "<Event EventID={0} Level={1}>".format(self.EventID, self.LevelStr)
 
+
+    def __del__(self):
+        # Be sure to clean up our event
+        try:
+            evtapi.EvtClose(self.handle)
+        except:
+            pass
+
     ##############
     # Properties #
     ##############
