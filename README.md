@@ -66,23 +66,23 @@ Every `Event` object also has a structure to it. The structure is effectively th
 
 ```xml
 <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
-<System>
-  <Provider Name="Microsoft-Windows-Security-SPP" Guid="{E23B33B0-C8C9-472C-A5F9-F2BDFEA0F156}" EventSourceName="Software Protection Platform Service" /> 
-  <EventID Qualifiers="16384">903</EventID> 
-  <Version>0</Version> 
-  <Level>0</Level> 
-  <Task>0</Task> 
-  <Opcode>0</Opcode> 
-  <Keywords>0x80000000000000</Keywords> 
-  <TimeCreated SystemTime="2017-05-05T16:11:37.282412200Z" /> 
-  <EventRecordID>12126</EventRecordID> 
-  <Correlation /> 
-  <Execution ProcessID="0" ThreadID="0" /> 
-  <Channel>Application</Channel> 
-  <Computer>Phoenix</Computer> 
-  <Security /> 
+  <System>
+    <Provider EventSourceName="Software Protection Platform Service" Guid="{E23B33B0-C8C9-472C-A5F9-F2BDFEA0F156}" Name="Microsoft-Windows-Security-SPP"/>
+    <EventID Qualifiers="16384">903</EventID>
+    <Version>0</Version>
+    <Level>0</Level>
+    <Task>0</Task>
+    <Opcode>0</Opcode>
+    <Keywords>0x80000000000000</Keywords>
+    <TimeCreated SystemTime="2017-05-05T16:11:37.282412200Z"/>
+    <EventRecordID>12126</EventRecordID>
+    <Correlation/>
+    <Execution ProcessID="0" ThreadID="0"/>
+    <Channel>Application</Channel>
+    <Computer>Phoenix</Computer>
+    <Security/>
   </System>
-  <EventData /> 
+  <EventData/>
 </Event>
 ```
 
