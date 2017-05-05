@@ -36,11 +36,14 @@ def _build_ffi():
         ffibuilder().compile()
         shutil.copyfile(glob("_winevt.*.pyd")[0],"_winevt.pyd")
     except Exception as e:
-        raise Exception(e)
         pass
 
     # Put us back in our original directory
     os.chdir(old_dir)
+
+def _install_cffi():
+    # Major hack... I need cffi to do the transparent building
+    os.system('pip install cffi')
 
 
 class CustomBuildPyCommand(build_py):
@@ -48,6 +51,13 @@ class CustomBuildPyCommand(build_py):
     def run(self):
         self.execute(_build_ffi, (), msg='Building ffi')
         build_py.run(self)
+
+class CustomInstallCommand(install):
+    """ Handle generating pyd file but not erroring if we can't. """
+    def run(self):
+        self.execute(_install_cffi, (), msg='Installing cffi')
+        self.execute(_build_ffi, (), msg='Building ffi')
+        install.run(self)
 
 class CustomSdistCommand(sdist):
     """ Make sure we generate a new pyd when creating our sdist. """
@@ -63,7 +73,7 @@ long_description = "See website for more info."
 
 setup(
     name='winevt',
-    version='0.0.3',
+    version='0.0.5',
     description='Script to programmatically interface with Windows Events.',
     long_description=long_description,
     url='https://github.com/owlz/winevt',
@@ -86,8 +96,8 @@ setup(
         'dev': ['ipython'],
     },
     cmdclass={
-        #'install': CustomInstallCommand,
-        'build_py': CustomBuildPyCommand,
+        'install': CustomInstallCommand,
+        #'build_py': CustomBuildPyCommand,
         'sdist': CustomSdistCommand,
     },
     package_data={'winevt': ['_winevt.pyd']},

@@ -3,3 +3,6 @@
 - Add remote log query and subscribe
 - Add bookmark ability
 - ETW...
+- Make setup less of a hack...
+- Allow multi-callbacks in a single process
+  - current solution is to multi-process for multi-callbacks
