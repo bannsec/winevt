@@ -2,7 +2,7 @@
 import cffi, re
 
 # Our defs we want to use
-cdef = r"""
+cdef_evtapi = r"""
 typedef enum { EvtRpcLogin = 1 } EVT_LOGIN_CLASS;
 
 typedef HANDLE EVT_HANDLE;
@@ -91,13 +91,16 @@ BOOL WINAPI EvtRender(
   _Out_ PDWORD     PropertyCount
 );
 
-DWORD WINAPI GetLastError(void);
-
 BOOL WINAPI EvtClose(
   _In_ EVT_HANDLE Object
 );
 """
 
+cdef_kernel32 = r"""
+DWORD WINAPI GetLastError(void);
+"""
+
+cdef = cdef_evtapi + cdef_kernel32
 
 # Simple source file
 source = r"""
@@ -110,7 +113,7 @@ void main()
 }
 """
 
-def ffibuilder():
+def ffibuilder(name="_winevt"):
     """Do out-of-line build."""
 
     # Insantiate a class
@@ -120,7 +123,7 @@ def ffibuilder():
     ffi.cdef(re.sub(r"\b(_In_|_Inout_|_Out_|_Outptr_)(opt_)?\b", " ",cdef))
 
     # Setup our binary
-    ffi.set_source("_winevt",source,libraries=["Wevtapi"])
+    ffi.set_source(name,source,libraries=["Wevtapi"])
 
     return ffi
 
