@@ -38,7 +38,7 @@ In [3]: for event in query:
    ...:     print(event.System.Provider['Name'])
 ```
 
-## Subscrption
+## Subscription
 Let's say you want to watch for new Errors and Critial events from the System log, and want to be able to take some form of immediate action. You can acomplish that through a subcription using a python function as your callback.
 
 ```python
