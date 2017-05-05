@@ -94,6 +94,17 @@ BOOL WINAPI EvtRender(
 BOOL WINAPI EvtClose(
   _In_ EVT_HANDLE Object
 );
+                
+typedef enum _EVT_SUBSCRIBE_FLAGS { 
+  EvtSubscribeToFutureEvents       = 1,
+  EvtSubscribeStartAtOldestRecord  = 2,
+  EvtSubscribeStartAfterBookmark   = 3,
+  EvtSubscribeOriginMask           = 0x3,
+  EvtSubscribeTolerateQueryErrors  = 0x1000,
+  EvtSubscribeStrict               = 0x10000
+} EVT_SUBSCRIBE_FLAGS;
+
+extern "Python" DWORD WINAPI SubscriptionCallback(EVT_SUBSCRIBE_NOTIFY_ACTION, PVOID, EVT_HANDLE);
 """
 
 cdef_kernel32 = r"""

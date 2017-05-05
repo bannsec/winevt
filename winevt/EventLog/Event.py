@@ -11,15 +11,17 @@ LogLevels = {
 
 class Event:
 
-    def __init__(self, handle, max_buf_size=None):
+    def __init__(self, handle, max_buf_size=None, close=None):
         """
         handle = event handle (such as returned by Query)
         max_buf_size = optionally set the max buffer size for returning things. Defaults to 65536
+        close = boolean, should we automatically close this event. Microsoft is quirky. Default True
         """
 
         self.__xml = None
         self.handle = handle
         self._max_buf_size = max_buf_size or 65536
+        self.close = close or True
 
         self.xml # Populate the event
 
@@ -28,6 +30,10 @@ class Event:
 
 
     def __del__(self):
+        # Sometimes we don't close it ourselves
+        if not self.close:
+            return
+
         # Be sure to clean up our event
         try:
             evtapi.EvtClose(self.handle)
@@ -37,6 +43,18 @@ class Event:
     ##############
     # Properties #
     ##############
+
+    @property
+    def close(self):
+        """ Should we close this event on distruction of the class? """
+        return self.__close
+
+    @close.setter
+    def close(self, close):
+        if type(close) is not bool:
+            raise Exception("Attempting to set close value to non-bool of {0}".format(type(close)))
+
+        self.__close = close
 
     @property
     def xml(self):
