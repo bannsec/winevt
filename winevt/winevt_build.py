@@ -122,11 +122,13 @@ def ffibuilder():
     # Setup our binary
     ffi.set_source("_winevt",source,libraries=["Wevtapi"])
 
+    return ffi
+
+
+# Default build and compile it.
+if __name__ == "__main__":
+    ffi = ffibuilder()
+
     # Compile it!
     ffi.compile(verbose=True)
-
-
-# Default action is to run ffibuilder
-if __name__ == "__main__":
-    ffibuilder()
 
