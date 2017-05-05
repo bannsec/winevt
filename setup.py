@@ -11,9 +11,10 @@ from codecs import open
 import os
 from setuptools.command.install import install
 from setuptools.command.build_py import build_py
-from setuptools import Command
+from setuptools.command.sdist import sdist
 import shutil
 from glob import glob
+import sys
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -26,6 +27,9 @@ def _build_ffi():
     old_dir = os.path.abspath(os.curdir)
     os.chdir(os.path.join(here,"winevt"))
 
+    # Apprently sdist doesn't have "." added by default?
+    sys.path.append(".")
+
     # Try compile it, but be OK with failure
     try:
         # Import our ffi builder
@@ -33,7 +37,8 @@ def _build_ffi():
 
         ffibuilder().compile()
         shutil.copyfile(glob("_winevt.*.pyd")[0],"_winevt.pyd")
-    except:
+    except Exception as e:
+        raise Exception(e)
         pass
 
     # Put us back in our original directory
@@ -45,6 +50,12 @@ class CustomBuildPyCommand(build_py):
     def run(self):
         self.execute(_build_ffi, (), msg='Building ffi')
         build_py.run(self)
+
+class CustomSdistCommand(sdist):
+    """ Make sure we generate a new pyd when creating our sdist. """
+    def run(self):
+        self.execute(_build_ffi, (), msg='Building ffi')
+        sdist.run(self)
 
 
 # Get the long description from the README file
@@ -80,6 +91,7 @@ setup(
     cmdclass={
         #'install': CustomInstallCommand,
         'build_py': CustomBuildPyCommand,
+        'sdist': CustomSdistCommand,
     },
     package_data={'winevt': ['_winevt.pyd']},
 )
