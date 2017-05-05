@@ -18,8 +18,6 @@ import sys
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-# TODO: Make sure sdist build builds the latest pyc into the release file..
-
 def _build_ffi():
     # This dance is hackish. Probably better way to do this.
 
