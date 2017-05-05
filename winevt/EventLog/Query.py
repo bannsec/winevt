@@ -23,6 +23,29 @@ class Query:
         # Be sure to clean up our query
         evtapi.EvtClose(self.handle)
 
+    def __repr__(self):
+        return "<Query path={0} query={1}>".format(self.path, self.query)
+
+    # We'll handle the iterator ourself
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        # Loop until we get no more events
+        # TODO: Check for errors on fail
+
+        # Creating new objects each time
+        evt_array = ffi.new("EVT_HANDLE *")
+        ret = ffi.new("PDWORD")
+
+        if not evtapi.EvtNext(self.handle, 1, evt_array, 60, 0, ret):
+            # TODO: Check for errors (GetLastError())
+            raise StopIteration
+
+        return ffi.unpack(evt_array, 1)[0]
+
+        
+
 
     ##############
     # Properties #
