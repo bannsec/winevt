@@ -91,3 +91,10 @@ If this were the XML for our `Event` object, and we wanted to find out the TimeC
 ```python
 event.System.TimeCreated['SystemTime']
 ```
+
+# Tested On
+I have only tested this on my Windows 10 x64 system with python 3.6 x64. It should work across most Windows systems given a Python x64 version >=3.2 (cffi changes).
+
+It will very likely NOT work on python 2.
+
+It might work on python 3.2+ x86. Let me know your experience.
