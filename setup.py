@@ -30,7 +30,7 @@ setup(
     ],
     keywords='windows event evt evtx',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    install_requires=["cffi>=1.0.0"],
+    install_requires=["cffi>=1.0.0","untangle"],
     setup_requires=["cffi>=1.0.0"],
     cffi_modules=["winevt/winevt_build.py:ffibuilder"],
     extras_require={
