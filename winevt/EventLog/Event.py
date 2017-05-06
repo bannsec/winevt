@@ -70,7 +70,7 @@ class Event:
         buf = ffi.new("PVOID[{0}]".format(int(self._max_buf_size/8)))
 
         if not evtapi.EvtRender(ffi.NULL, self.handle, evtapi.EvtRenderEventXml, self._max_buf_size, buf, ret, ret2):
-            raise Exception("Something failed when trying to render...")
+            raise Exception(get_last_error())
 
         # Save the buf
         self.__xml = ffi.string(ffi.cast("wchar_t *",buf))
@@ -111,5 +111,5 @@ class Event:
 
 
 #from _winevt import ffi, lib as evtapi
-from .. import ffi, evtapi
+from .. import ffi, evtapi, get_last_error
 import untangle

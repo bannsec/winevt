@@ -152,7 +152,7 @@ class Subscribe:
         ret = evtapi.EvtSubscribe(ffi.NULL, ffi.NULL, self.path, self.query, ffi.NULL, ffi.NULL, cb_ptr, self.flags)
 
         if not ret:
-            logger.error("Something went wrong subscribing...")
+            logger.error(get_last_error())
 
     @property
     def path(self):
@@ -176,5 +176,5 @@ class Subscribe:
         self.__query = query
 
 from inspect import signature
-from .. import ffi, evtapi, out_of_line
+from .. import ffi, evtapi, out_of_line, get_last_error
 from winevt.EventLog.Event import Event

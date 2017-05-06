@@ -3,6 +3,8 @@
 import logging
 logger = logging.getLogger("EventLog.Query")
 
+ERROR_NO_MORE_ITEMS = 0x103
+
 class Query:
 
     def __init__(self, path, query = None, direction = None):
@@ -45,7 +47,9 @@ class Query:
         ret = ffi.new("PDWORD")
 
         if not evtapi.EvtNext(self.handle, 1, evt_array, 60, 0, ret):
-            # TODO: Check for errors (GetLastError())
+            if kernel32.GetLastError() != 0x103:
+                logger.error(get_last_error())
+
             raise StopIteration
 
         return Event(ffi.unpack(evt_array, 1)[0])
@@ -62,7 +66,7 @@ class Query:
     @handle.setter
     def handle(self, handle):
         if handle == ffi.NULL:
-            logger.error("Something went wrong. Got NULL handle.")
+            logger.error(get_last_error())
             return
 
         self.__handle = handle
@@ -134,5 +138,5 @@ class Query:
         self.__direction = direction
 
 import os
-from .. import ffi, evtapi
+from .. import ffi, evtapi, kernel32, get_last_error
 from winevt.EventLog.Event import Event
