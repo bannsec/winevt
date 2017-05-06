@@ -4,18 +4,19 @@ import logging
 logger = logging.getLogger("EventLog.Query")
 
 ERROR_NO_MORE_ITEMS = 0x103
+from .Session import Session
 
-class Query:
+class Query(Session):
 
-    def __init__(self, path, query = None, direction = None):
+    def __init__(self, path, query = None, direction = None, *args, **kwargs):
         """
         path = The name of the channel or the full path to a log file that contains the events that you want to query. You can specify an .evt, .evtx, or.etl log file. The path is required if the Query parameter contains an XPath query; the path is ignored if the Query parameter contains a structured XML query and the query specifies the path.
         query = A query that specifies the types of events that you want to retrieve. You can specify an XPath 1.0 query or structured XML query. If your XPath contains more than 20 expressions, use a structured XML query. To receive all events, set this parameter to None or "*".
         direction = query "forward" or "backward" from your search.
         """
 
-        # TODO: Allow credential passing
-        # TODO: Allow remote querying
+        # Pass down authentication constructor
+        super(type(self), self).__init__(*args, **kwargs)
 
         self.path = path
         self.query = query or "*"

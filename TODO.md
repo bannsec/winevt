@@ -1,4 +1,3 @@
-- Check for and resolve windows errors.
 - Add user context class
  - incorporate into query and subscribe, allowing you to authenticate as a different user to subscribe to logs
 - Add remote log query and subscribe
@@ -7,3 +6,4 @@
 - Make setup less of a hack...
 - Allow multi-callbacks in a single process
   - current solution is to multi-process for multi-callbacks
+- unit tests

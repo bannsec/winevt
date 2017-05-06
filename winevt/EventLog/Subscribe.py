@@ -3,9 +3,11 @@
 import logging
 logger = logging.getLogger("EventLog.Subscribe")
 
-class Subscribe:
+from .Session import Session
 
-    def __init__(self, path, query, callback, start_from=None, tolerate_query_errors = False, strict = False):
+class Subscribe(Session):
+
+    def __init__(self, path, query, callback, start_from=None, tolerate_query_errors = False, strict = False, *args, **kwargs):
         """
         path = The name of the channel or the full path to a log file that contains the events that you want to query. You can specify an .evt, .evtx, or.etl log file. The path is required if the Query parameter contains an XPath query; the path is ignored if the Query parameter contains a structured XML query and the query specifies the path.
         query = A query that specifies the types of events that you want to retrieve. You can specify an XPath 1.0 query or structured XML query. If your XPath contains more than 20 expressions, use a structured XML query. To receive all events, set this parameter to None or "*".
@@ -14,6 +16,9 @@ class Subscribe:
         tolerate_query_errors = Should we try to push through errors in the query. Defaults to False.
         strict = Should we be strict about our query. See Property for details.
         """
+
+        # Pass down authentication constructor
+        super(type(self), self).__init__(*args, **kwargs)
 
         self.path = path
         self.query = query
