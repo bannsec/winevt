@@ -24,6 +24,11 @@ class Session:
         self.domain = domain
         self.server = server
         self.auth = auth
+        self.session = None
+
+        # Prompt for password if only username is selected
+        if self.username is not None and self.password is None:
+            self.password = getpass("Password: ")
 
         # Sanity check
         if (self.username is not None and self.password is None) or (self.username is None and self.password is not None):
@@ -37,6 +42,7 @@ class Session:
 
     @property
     def username(self):
+        """The user name to use to connect to the remote computer."""
         return self.__username
 
     @username.setter
@@ -48,6 +54,7 @@ class Session:
 
     @property
     def password(self):
+        """The password for the user account."""
         return self.__password
 
     @password.setter
@@ -59,6 +66,7 @@ class Session:
 
     @property
     def domain(self):
+        """The domain to which the user account belongs. Optional."""
         return self.__domain
 
     @domain.setter
@@ -70,6 +78,7 @@ class Session:
 
     @property
     def server(self):
+        """The name of the remote computer to connect to."""
         return self.__server
 
     @server.setter
@@ -128,5 +137,42 @@ class Session:
         else:
             raise Exception("How did I get here...?")
 
+    @property
+    def session(self):
+
+        # If our session is already made, return it
+        if self.__session is not None:
+            return self.__session
+
+
+        # Build up a new session object
+        login_struct = ffi.new("EVT_RPC_LOGIN *")
+        login_struct.User = ffi.new("wchar_t[{0}]".format(len(self.username)),self.username) if self.username is not None else ffi.NULL
+        login_struct.Password = ffi.new("wchar_t[{0}]".format(len(self.password)),self.password) if self.password is not None else ffi.NULL
+        login_struct.Domain = ffi.new("wchar_t[{0}]".format(len(self.domain)),self.domain) if self.domain is not None else ffi.NULL
+        login_struct.Server = ffi.new("wchar_t[{0}]".format(len(self.server)),self.server) if self.server is not None else ffi.NULL
+        login_struct.Flags = self.rpc_login_flags
+
+        # Open the session
+        ret = evtapi.EvtOpenSession(evtapi.EvtRpcLogin, login_struct, 0, 0)
+
+        # Check for error
+        if ret == ffi.NULL:
+            logger.error(get_last_error())
+
+        else:
+            self.__session = ret
+            self.__login_struct = login_struct
+            return ret
+
+    @session.setter
+    def session(self, session):
+
+        if type(session) not in [type(None), ffi.CData]:
+            raise Exception("Invalid Session type of {0}".format(type(session)))
+
+        self.__session = session
+
 
 from .. import ffi, evtapi, kernel32, get_last_error
+from getpass import getpass

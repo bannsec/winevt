@@ -23,7 +23,7 @@ class Query(Session):
         self.direction = direction
 
         # Grab a handle to this query
-        self.handle = evtapi.EvtQuery(ffi.NULL, self.path, self.query, self.flags)
+        self.handle = evtapi.EvtQuery(self.session, self.path, self.query, self.flags)
 
     def __del__(self):
         # Be sure to clean up our query

@@ -154,7 +154,7 @@ class Subscribe(Session):
         # Subscribe to the events
         #
 
-        ret = evtapi.EvtSubscribe(ffi.NULL, ffi.NULL, self.path, self.query, ffi.NULL, ffi.NULL, cb_ptr, self.flags)
+        ret = evtapi.EvtSubscribe(self.session, ffi.NULL, self.path, self.query, ffi.NULL, ffi.NULL, cb_ptr, self.flags)
 
         if not ret:
             logger.error(get_last_error())
