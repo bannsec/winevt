@@ -92,6 +92,23 @@ If this were the XML for our `Event` object, and we wanted to find out the TimeC
 event.System.TimeCreated['SystemTime']
 ```
 
+# Authenticate Local and Remote
+You can authenticate locally and remotely. If you provide no extra details, you will by default authenticate locally as your current user. However, for both `Query` and `Subscribe`, you can provide the following optional arguments:
+
+ - username
+ - password
+ - domain
+ - server
+ - auth (default, negotiate, kerberos, ntlm)
+
+For example, if you wished to connect to a server using username "administrator", it would be:
+
+```python
+query = EventLog.Query("Security","*",username="administrator", server="myserver", domain="mydomain")
+```
+
+You would then be prompted for the password interactively.
+
 # Tested On
 I have only tested this on my Windows 10 x64 system with python 3.6 x64. It should work across most Windows systems given a Python x64 version >=3.2 (cffi changes).
 
