@@ -121,6 +121,7 @@ DWORD WINAPI FormatMessageA(
   _In_opt_ PDWORD  Arguments
 );
 
+LPWSTR GetLastErrorAsString(void);
 """
 
 cdef = cdef_evtapi + cdef_kernel32
@@ -129,6 +130,32 @@ cdef = cdef_evtapi + cdef_kernel32
 source = r"""
 #include <windows.h>
 #include <WinEvt.h>
+
+
+
+//Returns the last Win32 error, in string format. Returns an empty string if there is no error.
+LPWSTR GetLastErrorAsString()
+{
+    //Get the error message, if any.
+    DWORD errorMessageID = GetLastError();
+
+    if(errorMessageID == 0)
+        return "";
+
+    LPWSTR messageBuffer = NULL;
+    size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                                 NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+
+    //std::string message(messageBuffer, size);
+
+    //Free the buffer.
+    //LocalFree(messageBuffer);
+
+    printf("%s\n",messageBuffer);
+    return messageBuffer;
+}
+
+
 
 void main()
 {

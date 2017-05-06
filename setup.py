@@ -33,7 +33,7 @@ def _build_ffi():
         # Import our ffi builder
         from winevt_build import ffibuilder
 
-        ffibuilder().compile()
+        ffibuilder().compile(verbose=True)
         shutil.copyfile(glob("_winevt.*.pyd")[0],"_winevt.pyd")
     except Exception as e:
         pass

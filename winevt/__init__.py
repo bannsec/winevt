@@ -51,6 +51,8 @@ def get_last_error():
         return None
 
     # Gonna need a string pointer
-    buf = ffi.new("LPSTR")
+    buf = ffi.new("LPWSTR")
 
-    
+    chars = kernel32.FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, ffi.NULL, error_id , 0, buf, 0, ffi.NULL)
+
+    return ffi.string(ffi.cast("char **",buf)[0][0:chars]).decode('utf-8')
