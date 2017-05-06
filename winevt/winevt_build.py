@@ -104,6 +104,10 @@ typedef enum _EVT_SUBSCRIBE_FLAGS {
   EvtSubscribeStrict               = 0x10000
 } EVT_SUBSCRIBE_FLAGS;
 
+EVT_HANDLE WINAPI EvtCreateBookmark(
+  _In_opt_ LPCWSTR BookmarkXml
+);
+
 extern "Python" DWORD WINAPI SubscriptionCallback(EVT_SUBSCRIBE_NOTIFY_ACTION, PVOID, EVT_HANDLE);
 
 """
