@@ -1,5 +1,8 @@
 """ Defines an Event Log Query """
 
+import logging
+logger = logging.getLogger("EventLog.Query")
+
 class Query:
 
     def __init__(self, path, query = None, direction = None):
@@ -51,6 +54,18 @@ class Query:
     ##############
     # Properties #
     ##############
+
+    @property
+    def handle(self):
+        return self.__handle
+
+    @handle.setter
+    def handle(self, handle):
+        if handle == ffi.NULL:
+            logger.error("Something went wrong. Got NULL handle.")
+            return
+
+        self.__handle = handle
 
     @property
     def flags(self):
