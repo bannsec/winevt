@@ -57,7 +57,6 @@ class Query(Session):
 
     def __next__(self):
         # Loop until we get no more events
-        # TODO: Check for errors on fail
 
         # Creating new objects each time
         evt_array = ffi.new("EVT_HANDLE *")

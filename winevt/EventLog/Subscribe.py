@@ -7,7 +7,7 @@ from .Session import Session
 
 class Subscribe(Session):
 
-    def __init__(self, path, query, callback, start_from=None, tolerate_query_errors = False, strict = False, *args, **kwargs):
+    def __init__(self, path, query, callback, start_from=None, tolerate_query_errors = False, strict = False, bookmark = None, *args, **kwargs):
         """
         path = The name of the channel or the full path to a log file that contains the events that you want to query. You can specify an .evt, .evtx, or.etl log file. The path is required if the Query parameter contains an XPath query; the path is ignored if the Query parameter contains a structured XML query and the query specifies the path.
         query = A query that specifies the types of events that you want to retrieve. You can specify an XPath 1.0 query or structured XML query. If your XPath contains more than 20 expressions, use a structured XML query. To receive all events, set this parameter to None or "*".
@@ -15,11 +15,13 @@ class Subscribe(Session):
         start_from = Where to start subscription from. Default is "future". See property.
         tolerate_query_errors = Should we try to push through errors in the query. Defaults to False.
         strict = Should we be strict about our query. See Property for details.
+        bookmark = Use bookmark to keep track of where you are
         """
 
         # Pass down authentication constructor
         super(type(self), self).__init__(*args, **kwargs)
 
+        self.bookmark = bookmark
         self.path = path
         self.query = query
         self.start_from = start_from or "future"
@@ -33,6 +35,18 @@ class Subscribe(Session):
     ##############
     # Properties #
     ##############
+
+    @property
+    def bookmark(self):
+        """Bookmark object to use in query. """
+        return self.__bookmark
+
+    @bookmark.setter
+    def bookmark(self, bookmark):
+        if type(bookmark) not in [Bookmark, type(None)]:
+            raise Exception("Invalid type for bookmark of {0}".format(type(bookmark)))
+
+        self.__bookmark = bookmark
 
     @property
     def strict(self):
@@ -78,6 +92,9 @@ class Subscribe(Session):
 
         if self.strict:
             flags |= evtapi.EvtSubscribeStrict
+
+        if self.bookmark is not None:
+            flags |= evtapi.EvtSubscribeStartAfterBookmark
 
         return flags
 
@@ -130,7 +147,12 @@ class Subscribe(Session):
                 # TODO: Watch action for error
                 # https://msdn.microsoft.com/en-us/library/windows/desktop/aa385596(v=vs.85).aspx
                 # 
-                callback(action, pContext, Event(hEvent, close=False))
+                event = Event(hEvent, close=False)
+
+                if self.bookmark is not None:
+                    self.bookmark.update(event)
+
+                callback(action, pContext, event)
 
                 # TODO: Do we always assume success?
                 return 1
@@ -142,7 +164,12 @@ class Subscribe(Session):
             # In-line callback setup
             @ffi.callback("DWORD WINAPI SubscriptionCallback(EVT_SUBSCRIBE_NOTIFY_ACTION, PVOID, EVT_HANDLE)")
             def SubscriptionCallback(action, pContext, hEvent):
-                callback(action, pContext, Event(hEvent, close=False))
+                event = Event(hEvent, close=False)
+
+                if self.bookmark is not None:
+                    self.bookmark.update(event)
+
+                callback(action, pContext, event)
 
                 # TODO: Do we always assume success?
                 return 1
@@ -154,7 +181,7 @@ class Subscribe(Session):
         # Subscribe to the events
         #
 
-        ret = evtapi.EvtSubscribe(self.session, ffi.NULL, self.path, self.query, ffi.NULL, ffi.NULL, cb_ptr, self.flags)
+        ret = evtapi.EvtSubscribe(self.session, ffi.NULL, self.path, self.query, self.bookmark.handle if self.bookmark is not None else ffi.NULL, ffi.NULL, cb_ptr, self.flags)
 
         if not ret:
             logger.error(get_last_error())
@@ -183,3 +210,4 @@ class Subscribe(Session):
 from inspect import signature
 from .. import ffi, evtapi, out_of_line, get_last_error
 from winevt.EventLog.Event import Event
+from .Bookmark import Bookmark

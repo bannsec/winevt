@@ -109,6 +109,35 @@ query = EventLog.Query("Security","*",username="administrator", server="myserver
 
 You would then be prompted for the password interactively.
 
+# Bookmarks
+If you want to ensure you're not losing your place, you can use bookmarks. The Bookmark class abstracts the fundamental Windows construct of a bookmark. Use of bookmarks can be done by:
+
+1. Instantiate a new bookmark
+
+```python
+bookmark = EventLog.Bookmark()
+```
+
+1b. If you already have a bookmark, just feed in the xml
+
+```python
+bookmark = EventLog.Bookmark(xml)
+```
+
+2. Give the bookmark parameter to `Query` or `Subscribe`
+
+```python
+cb = EventLog.Subscribe("System","*",handle_event,bookmark=bookmark)
+```
+
+3. Save your bookmark by saving your xml however you wish
+
+```python
+bookmark.xml
+```
+
+The updating of the bookmark will occur behind the scenes for you.
+
 # Tested On
 I have only tested this on my Windows 10 x64 system with python 3.6 x64. It should work across most Windows systems given a Python x64 version >=3.2 (cffi changes).
 
