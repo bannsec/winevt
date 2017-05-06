@@ -15,6 +15,21 @@ class Bookmark:
         self.__set_xml = xml
         self.handle = None
 
+    def update(self, event):
+        """ Update this bookmark from an Event or EventID. Returns bool successful or not."""
+        if type(event) not in [Event, ffi.CData]:
+            raise Exception("Attempting to update bookmark from invalid type {0}".format(type(event)))
+
+        # Grab the Event ID if needed
+        if type(event) is Event:
+            event = event.handle
+
+        if not evtapi.EvtUpdateBookmark(self.handle, event):
+            logger.error(get_last_error())
+            return False
+
+        return True
+
     ##############
     # Properties #
     ##############
@@ -71,3 +86,4 @@ class Bookmark:
 
 
 from .. import ffi, evtapi, get_last_error
+from .Event import Event

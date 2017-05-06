@@ -108,6 +108,28 @@ EVT_HANDLE WINAPI EvtCreateBookmark(
   _In_opt_ LPCWSTR BookmarkXml
 );
 
+BOOL WINAPI EvtUpdateBookmark(
+  _In_ EVT_HANDLE Bookmark,
+  _In_ EVT_HANDLE Event
+);
+
+BOOL WINAPI EvtSeek(
+  _In_ EVT_HANDLE ResultSet,
+  _In_ LONGLONG   Position,
+  _In_ EVT_HANDLE Bookmark,
+  _In_ DWORD      Timeout,
+  _In_ DWORD      Flags
+);
+
+typedef enum _EVT_SEEK_FLAGS { 
+  EvtSeekRelativeToFirst     = 1,
+  EvtSeekRelativeToLast      = 2,
+  EvtSeekRelativeToCurrent   = 3,
+  EvtSeekRelativeToBookmark  = 4,
+  EvtSeekOriginMask          = 7,
+  EvtSeekStrict              = 0x10000
+} EVT_SEEK_FLAGS;
+
 extern "Python" DWORD WINAPI SubscriptionCallback(EVT_SUBSCRIBE_NOTIFY_ACTION, PVOID, EVT_HANDLE);
 
 """

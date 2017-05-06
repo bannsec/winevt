@@ -8,11 +8,12 @@ from .Session import Session
 
 class Query(Session):
 
-    def __init__(self, path, query = None, direction = None, *args, **kwargs):
+    def __init__(self, path, query = None, direction = None, bookmark = None, *args, **kwargs):
         """
         path = The name of the channel or the full path to a log file that contains the events that you want to query. You can specify an .evt, .evtx, or.etl log file. The path is required if the Query parameter contains an XPath query; the path is ignored if the Query parameter contains a structured XML query and the query specifies the path.
         query = A query that specifies the types of events that you want to retrieve. You can specify an XPath 1.0 query or structured XML query. If your XPath contains more than 20 expressions, use a structured XML query. To receive all events, set this parameter to None or "*".
         direction = query "forward" or "backward" from your search.
+        bookmark = optional Bookmark object to pick up where you left off.
         """
 
         # Pass down authentication constructor
@@ -21,9 +22,24 @@ class Query(Session):
         self.path = path
         self.query = query or "*"
         self.direction = direction
+        self.bookmark = bookmark
 
         # Grab a handle to this query
         self.handle = evtapi.EvtQuery(self.session, self.path, self.query, self.flags)
+
+        # Seek to our bookmark if need be
+        if self.bookmark is not None:
+            self._seek_to_bookmark(bookmark)
+
+    def _seek_to_bookmark(self,bookmark):
+        """Seeks the current query to the location of our bookmark."""
+        
+        if not evtapi.EvtSeek(self.handle, 1, bookmark.handle, 0, evtapi.EvtSeekRelativeToBookmark):
+            logger.error(get_last_error())
+            return False
+
+        return True
+
 
     def __del__(self):
         # Be sure to clean up our query
@@ -53,12 +69,30 @@ class Query(Session):
 
             raise StopIteration
 
-        return Event(ffi.unpack(evt_array, 1)[0])
+        event = Event(ffi.unpack(evt_array, 1)[0])
+
+        # Update bookmark if we need to
+        if self.bookmark is not None:
+            self.bookmark.update(event)
+
+        return event
 
 
     ##############
     # Properties #
     ##############
+
+    @property
+    def bookmark(self):
+        """Bookmark object to use in query. """
+        return self.__bookmark
+
+    @bookmark.setter
+    def bookmark(self, bookmark):
+        if type(bookmark) not in [Bookmark, type(None)]:
+            raise Exception("Invalid type for bookmark of {0}".format(type(bookmark)))
+
+        self.__bookmark = bookmark
 
     @property
     def handle(self):
@@ -141,3 +175,4 @@ class Query(Session):
 import os
 from .. import ffi, evtapi, kernel32, get_last_error
 from winevt.EventLog.Event import Event
+from .Bookmark import Bookmark
