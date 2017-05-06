@@ -105,10 +105,22 @@ typedef enum _EVT_SUBSCRIBE_FLAGS {
 } EVT_SUBSCRIBE_FLAGS;
 
 extern "Python" DWORD WINAPI SubscriptionCallback(EVT_SUBSCRIBE_NOTIFY_ACTION, PVOID, EVT_HANDLE);
+
 """
 
 cdef_kernel32 = r"""
 DWORD WINAPI GetLastError(void);
+
+DWORD WINAPI FormatMessageA(
+  _In_     DWORD   dwFlags,
+  _In_opt_ LPCVOID lpSource,
+  _In_     DWORD   dwMessageId,
+  _In_     DWORD   dwLanguageId,
+  _Out_    LPWSTR  lpBuffer,
+  _In_     DWORD   nSize,
+  _In_opt_ PDWORD  Arguments
+);
+
 """
 
 cdef = cdef_evtapi + cdef_kernel32

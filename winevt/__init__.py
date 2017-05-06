@@ -26,3 +26,31 @@ except ModuleNotFoundError:
     evtapi = ffi.dlopen("Wevtapi.dll")
     kernel32 = ffi.dlopen("Kernel32.dll")
 
+#
+# Some Enums
+#
+
+FORMAT_MESSAGE_ALLOCATE_BUFFER  = 0x00000100
+FORMAT_MESSAGE_ARGUMENT_ARRAY   = 0x00002000
+FORMAT_MESSAGE_FROM_HMODULE     = 0x00000800
+FORMAT_MESSAGE_FROM_STRING      = 0x00000400
+FORMAT_MESSAGE_FROM_SYSTEM      = 0x00001000
+FORMAT_MESSAGE_IGNORE_INSERTS   = 0x00000200
+FORMAT_MESSAGE_MAX_WIDTH_MASK   = 0x000000FF
+
+#
+# Helper functions
+#
+
+def get_last_error():
+    """ Get the last error value, then turn it into a nice string. Return the string. """
+    error_id = kernel32.GetLastError()
+    
+    # No actual error
+    if error_id == 0:
+        return None
+
+    # Gonna need a string pointer
+    buf = ffi.new("LPSTR")
+
+    
