@@ -138,6 +138,9 @@ bookmark.xml
 
 The updating of the bookmark will occur behind the scenes for you.
 
+# Multiple Subscription Support
+This library supports subscribing to as many channels as you want. The caveat is that you should not allow your `Subscription` objects to be garbage collected. In practice, this just means don't overwrite your class variables. Even if you're not using them, keep them around so that python doesn't try to garbage collect them on you.
+
 # Tested On
 I have only tested this on my Windows 10 x64 system with python 3.6 x64. It should work across most Windows systems given a Python x64 version >=3.2 (cffi changes).
 
