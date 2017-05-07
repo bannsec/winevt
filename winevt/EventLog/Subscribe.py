@@ -135,6 +135,9 @@ class Subscribe(Session):
 
         # Keep track of the original function
         self.__callback_python = callback
+
+        # Keep track of callbacks internally
+        settings.callbacks.append(callback)
         
         ################
         # Add the hook #
@@ -151,6 +154,12 @@ class Subscribe(Session):
 
                 if self.bookmark is not None:
                     self.bookmark.update(event)
+
+                # Resolve the context
+                pContext = ffi.unpack(ffi.cast("int *",pContext),1)[0]
+
+                # Figure out which function to send it to
+                callback = settings.callbacks[pContext-1]
 
                 callback(action, pContext, event)
 
@@ -169,6 +178,12 @@ class Subscribe(Session):
                 if self.bookmark is not None:
                     self.bookmark.update(event)
 
+                # Resolve the context
+                pContext = ffi.unpack(ffi.cast("int *",pContext),1)[0]
+
+                # Figure out which function to send it to
+                callback = settings.callbacks[pContext-1]
+
                 callback(action, pContext, event)
 
                 # TODO: Do we always assume success?
@@ -181,7 +196,10 @@ class Subscribe(Session):
         # Subscribe to the events
         #
 
-        ret = evtapi.EvtSubscribe(self.session, ffi.NULL, self.path, self.query, self.bookmark.handle if self.bookmark is not None else ffi.NULL, ffi.NULL, cb_ptr, self.flags)
+        # Save this off so gc doesn't get it.
+        self.__cb_context = ffi.new("int *",len(settings.callbacks))
+
+        ret = evtapi.EvtSubscribe(self.session, ffi.NULL, self.path, self.query, self.bookmark.handle if self.bookmark is not None else ffi.NULL, self.__cb_context, cb_ptr, self.flags)
 
         if not ret:
             logger.error(get_last_error())
@@ -211,3 +229,4 @@ from inspect import signature
 from .. import ffi, evtapi, out_of_line, get_last_error
 from winevt.EventLog.Event import Event
 from .Bookmark import Bookmark
+import winevt.settings as settings

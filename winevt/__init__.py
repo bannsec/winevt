@@ -4,6 +4,8 @@ import logging
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger("winevt")
 
+import winevt.settings as settings
+
 #
 # Load up whichever way we can
 #
@@ -25,6 +27,10 @@ except ModuleNotFoundError:
     ffi = ffibuilder()
     evtapi = ffi.dlopen("Wevtapi.dll")
     kernel32 = ffi.dlopen("Kernel32.dll")
+
+# Init settings if we haven't yet
+if settings.callbacks == None:
+    settings.init()
 
 #
 # Some Enums
