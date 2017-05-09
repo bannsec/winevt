@@ -73,7 +73,7 @@ long_description = "See website for more info."
 
 setup(
     name='winevt',
-    version='0.0.9',
+    version='0.0.10',
     description='Script to programmatically interface with Windows Events.',
     long_description=long_description,
     url='https://github.com/owlz/winevt',
