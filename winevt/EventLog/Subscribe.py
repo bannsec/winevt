@@ -21,6 +21,7 @@ class Subscribe(Session):
         # Pass down authentication constructor
         super(type(self), self).__init__(*args, **kwargs)
 
+        self.handle = None
         self.bookmark = bookmark
         self.path = path
         self.query = query
@@ -29,12 +30,36 @@ class Subscribe(Session):
         self.strict = strict
         self.callback = callback
 
+    def unsubscribe(self):
+        """Explicitly unsubscribe from events."""
+
+        # Be sure to clean up our subscription
+        try:
+            evtapi.EvtClose(self.handle)
+        except:
+            logger.error(get_last_error())
+
+
     def __repr__(self):
         return "<Subscribe path=\"{0}\" query=\"{1}\" callback=\"{2}\">".format(self.path, self.query, self.__callback_python.__name__)
+
+    def __del__(self):
+        self.unsubscribe()
+        super(type(self), self).__del__()
+
 
     ##############
     # Properties #
     ##############
+
+    @property
+    def handle(self):
+        """Handle to our Subscription."""
+        return self.__handle
+
+    @handle.setter
+    def handle(self, handle):
+        self.__handle = handle
 
     @property
     def bookmark(self):
@@ -199,9 +224,9 @@ class Subscribe(Session):
         # Save this off so gc doesn't get it.
         self.__cb_context = ffi.new("int *",len(settings.callbacks))
 
-        ret = evtapi.EvtSubscribe(self.session, ffi.NULL, self.path, self.query, self.bookmark.handle if self.bookmark is not None else ffi.NULL, self.__cb_context, cb_ptr, self.flags)
+        self.handle = evtapi.EvtSubscribe(self.session, ffi.NULL, self.path, self.query, self.bookmark.handle if self.bookmark is not None else ffi.NULL, self.__cb_context, cb_ptr, self.flags)
 
-        if not ret:
+        if not self.handle:
             logger.error(get_last_error())
 
     @property

@@ -34,7 +34,8 @@ class Session:
         if (self.username is not None and self.password is None) or (self.username is None and self.password is not None):
             raise Exception("Must select either both username/password or neither.")
 
-
+    def __del__(self):
+        pass
 
     ##############
     # Properties #

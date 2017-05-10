@@ -48,6 +48,9 @@ class Query(Session):
         except:
             pass
 
+        super(type(self), self).__del__()
+
+
     def __repr__(self):
         return "<Query path={0} query={1}>".format(self.path, self.query)
 

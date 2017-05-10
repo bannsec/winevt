@@ -55,6 +55,12 @@ Got event: <Event EventID=10016 Level=Error>
 Got event: <Event EventID=10016 Level=Error>
 ```
 
+If you want to cancel your subscription, simply use the unsubscribe method:
+
+```python
+In [5]: cb.unsubscribe()
+```
+
 # EventLog.Event
 The `EventLog.Event` class abstracts the concept of a Windows Event Log. There are likely two primary ways you would use this:
 
