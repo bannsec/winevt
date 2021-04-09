@@ -33,7 +33,7 @@ class Query(Session):
 
     def _seek_to_bookmark(self,bookmark):
         """Seeks the current query to the location of our bookmark."""
-        
+
         if not evtapi.EvtSeek(self.handle, 1, bookmark.handle, 0, evtapi.EvtSeekRelativeToBookmark):
             logger.error(get_last_error())
             return False
@@ -65,7 +65,7 @@ class Query(Session):
         evt_array = ffi.new("EVT_HANDLE *")
         ret = ffi.new("PDWORD")
 
-        if not evtapi.EvtNext(self.handle, 1, evt_array, 60, 0, ret):
+        if not evtapi.EvtNext(self.handle, 1, evt_array, 1000, 0, ret):
             if kernel32.GetLastError() != 0x103:
                 logger.error(get_last_error())
 
@@ -112,7 +112,7 @@ class Query(Session):
     def flags(self):
         """ Flags to be used for this query. """
         flags = 0
-        
+
         # Add forward and back
         if self.direction == "forward":
             flags |= evtapi.EvtQueryForwardDirection
@@ -161,7 +161,7 @@ class Query(Session):
 
         if type(direction) not in [type(None), str]:
             raise Exception("Invalid direction of type {0}".format(type(direction)))
-        
+
         # Normalize it
         if direction is None:
             direction = "forward"
