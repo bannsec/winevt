@@ -152,11 +152,13 @@ class Subscribe(Session):
 
     @callback.setter
     def callback(self, callback):
-        if type(callback) is not type(lambda x: x):
-            raise Exception("Did not receive function for callback. Recieved invalid type {0}".format(type(callback)))
+        if not callable(callback):
+            raise Exception("Did not receive a callable for callback. Received invalid type {0}".format(type(callback)))
 
-        if len(signature(callback).parameters) != 3:
-            raise Exception("Python callback function must accept 3 parameters: action, pContext, Event")
+        param_count = len(signature(callback).parameters)
+        if param_count != 3 and param_count != 4:
+            raise Exception(
+                "Python callback function must accept either 3 or 4 parameters: action, pContext, Event, and optionally self for methods.")
 
         # Keep track of the original function
         self.__callback_python = callback
