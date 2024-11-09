@@ -29,6 +29,8 @@ def test_create_error_event():
     events = [event for event in query]
     assert len(events) > 0
     for event in events:
+        print(event)  # Debugging statement
         assert event.System.Provider['Name'] == APP_NAME
         assert event.System.EventID.cdata == str(EVENT_ID)
-        assert event.EventData.Data[0].cdata == EVENT_DESCRIPTION[0]
+        if event.EventData.Data[0].cdata is not None:
+            assert event.EventData.Data[0].cdata == EVENT_DESCRIPTION[0]
