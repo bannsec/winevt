@@ -1,5 +1,4 @@
-import pytest
-from winevt import EventLog, Query
+from winevt import EventLog
 
 def test_query_application_log():
     query = EventLog.Query("Application", "Event/System/Provider[@Name='Windows Error Reporting']")
