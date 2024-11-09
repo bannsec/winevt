@@ -1,0 +1,17 @@
+LICENSE.txt
+README.md
+setup.py
+winevt/__init__.py
+winevt/settings.py
+winevt/winevt_build.py
+winevt.egg-info/PKG-INFO
+winevt.egg-info/SOURCES.txt
+winevt.egg-info/dependency_links.txt
+winevt.egg-info/requires.txt
+winevt.egg-info/top_level.txt
+winevt/EventLog/Bookmark.py
+winevt/EventLog/Event.py
+winevt/EventLog/Query.py
+winevt/EventLog/Session.py
+winevt/EventLog/Subscribe.py
+winevt/EventLog/__init__.py
