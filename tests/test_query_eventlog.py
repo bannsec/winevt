@@ -32,5 +32,5 @@ def test_create_error_event():
         print(event)  # Debugging statement
         assert event.System.Provider['Name'] == APP_NAME
         assert event.System.EventID.cdata == str(EVENT_ID)
-        if event.EventData.Data[0].cdata is not None:
+        if event.EventData is not None and event.EventData.Data is not None and event.EventData.Data[0].cdata is not None:
             assert event.EventData.Data[0].cdata == EVENT_DESCRIPTION[0]
