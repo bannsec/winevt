@@ -93,7 +93,7 @@ setup(
     install_requires=["cffi>=1.0.0","untangle"],
     #cffi_modules=["winevt/winevt_build.py:ffibuilder"],
     extras_require={
-        'dev': ['ipython'],
+        'dev': ['ipython', 'pytest', 'pywin32'],
     },
     cmdclass={
         'install': CustomInstallCommand,
@@ -102,4 +102,3 @@ setup(
     },
     package_data={'winevt': ['_winevt.pyd']},
 )
-
